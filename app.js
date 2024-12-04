@@ -1,14 +1,12 @@
 const http = require("http");
 const fs = require("fs");
+const { parse } = require("path");
 
 const server = http.createServer((req, res) => {
   const url = req.url;
   const method = req.method;
 
-  console.log(`Request received for: ${url}`);
-
   if (url === "/") {
-    console.log("Serving homepage");
     res.write("<html>");
     res.write("<head><title>Enter Message</title></head>");
     res.write(
@@ -19,8 +17,18 @@ const server = http.createServer((req, res) => {
   }
 
   if (url === "/message" && method === "POST") {
-    console.log("Form submitted");
-    fs.writeFileSync("message.txt", "DUMMY"); // Dosyaya yazma işlemi
+    const body = [];
+    req.on("data", (chunk) => {
+      console.log(chunk); // parselanmamış buffer olarak numaralar gelir
+      body.push(chunk);
+    });
+    req.on("end", () => {
+      const parsedBody = Buffer.concat(body).toString();
+      const message = parsedBody.split("=")[1]; //eşittirin yanındakini alıyoruz yani öncesini önemsemiycez.
+      console.log(message); //parselanmış şekilde textbox içindeki yazı gelir, form içine yazdığımdan orada name message demiştim message = gibi yazar
+      fs.writeFileSync("message.txt", message); // Dosyaya message içine parseladığımız yazma işlemi
+    });
+
     res.statusCode = 302; // Yönlendirme kodu
     res.setHeader("Location", "/"); // Anasayfaya yönlendirme
     return res.end();
