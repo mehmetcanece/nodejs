@@ -21,8 +21,7 @@ const server = http.createServer((req, res) => {
     res.setHeader("Location", "/");
     return res.end();
   }
-  /*   process.exit(); //bunu yazadığında server kapanıyor, hard exit.
-   */
+
   res.setHeader("Content-Type", "text/html");
   res.write("<html>"); // responsa yazdığımız şeyler
   res.write("<head><title>My First Page</title></head>");
