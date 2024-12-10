@@ -26,10 +26,11 @@ const server = http.createServer((req, res) => {
       const parsedBody = Buffer.concat(body).toString();
       const message = parsedBody.split("=")[1]; //eşittirin yanındakini alıyoruz yani öncesini önemsemiycez.
       console.log(message); //parselanmış şekilde textbox içindeki yazı gelir, form içine yazdığımdan orada name message demiştim message = gibi yazar
-      fs.writeFileSync("message.txt", message); // Dosyaya message içine parseladığımız yazma işlemi
-      res.statusCode = 302; // Yönlendirme kodu
-      res.setHeader("Location", "/"); // Anasayfaya yönlendirme
-      return res.end();
+      fs.writeFile("message.txt", message, (err) => {
+        res.statusCode = 302;
+        res.setHeader("Location", "/");
+        return res.end();
+      });
     });
   }
 
